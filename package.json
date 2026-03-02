@@ -1,13 +1,10 @@
 {
   "name": "dnz-qris",
   "version": "1.0.0",
-  "description": "Sistem Pembayaran QRIS Otomatis DNZ Store",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
+  "type": "module",
   "dependencies": {
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "^2.39.0",
+    "qris-generator": "^1.0.2"
   },
   "engines": {
     "node": "24.x"
