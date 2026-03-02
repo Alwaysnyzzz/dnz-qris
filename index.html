@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denz Store - Payment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; background: #1a1a1a; color: white; padding: 20px; }
+        .card { background: #2d2d2d; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 350px; margin: auto; }
+        #qrcode { background: white; padding: 10px; border-radius: 10px; margin: 20px auto; display: inline-block; }
+        input { width: 90%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: none; }
+        button { width: 100%; padding: 12px; background: #00c853; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .status { margin-top: 15px; font-size: 0.9rem; color: #ffab00; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>DNZ STORE</h2>
+        <div id="input-area">
+            <p>Masukkan Nominal Donasi/Bayar:</p>
+            <input type="number" id="amount" placeholder="Contoh: 10000">
+            <button onclick="prosesBayar()">BAYAR SEKARANG</button>
+        </div>
+        <div id="pay-area" style="display:none;">
+            <p>Total (Termasuk Kode Unik):</p>
+            <h3 id="total-display"></h3>
+            <div id="qrcode"></div>
+            <div class="status" id="status-text">⏳ Menunggu Pembayaran Otomatis...</div>
+        </div>
+    </div>
+
+    <script>
+        async function prosesBayar() {
+            const nominal = document.getElementById('amount').value;
+            if(!nominal || nominal < 1000) return alert("Minimal Rp 1.000");
+
+            const res = await fetch('/api/create', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ nominal: nominal })
+            });
+            const data = await res.json();
+            
+            document.getElementById('input-area').style.display = 'none';
+            document.getElementById('pay-area').style.display = 'block';
+            document.getElementById('total-display').innerText = "Rp " + data.total.toLocaleString();
+            
+            new QRCode(document.getElementById("qrcode"), {
+                text: data.qrString,
+                width: 200,
+                height: 200
+            });
+            
+            mulaiCekStatus(data.orderId);
+        }
+
+        function mulaiCekStatus(id) {
+            setInterval(async () => {
+                const res = await fetch('/api/check?id=' + id);
+                const data = await res.json();
+                if(data.status === 'SUCCESS') {
+                    document.getElementById('status-text').innerText = "✅ PEMBAYARAN BERHASIL!";
+                    document.getElementById('status-text').style.color = "#00c853";
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

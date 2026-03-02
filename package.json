@@ -1,17 +1,15 @@
 {
-  "name": "dnz-pay",
+  "name": "dnz-qris",
   "version": "1.0.0",
-  "description": "",
+  "description": "Sistem Pembayaran QRIS Otomatis DNZ Store",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "@supabase/supabase-js": "^2.98.0",
-    "qrcode-svg": "^1.1.0"
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
