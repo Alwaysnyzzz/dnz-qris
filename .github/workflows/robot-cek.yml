@@ -1,15 +1,26 @@
-name: Robot Cek Mutasi Otomatis
+name: Auto Cek Mutasi Atlantik
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/2 * * * *' 
   workflow_dispatch:
 
 jobs:
-  cek-mutasi:
+  cek-atlantik:
     runs-on: ubuntu-latest
     steps:
-      - name: Hit API Update Status
+      - name: Ambil Mutasi Atlantik
+        env:
+          # Moco teko Secret sing mbok gawe mau
+          API_KEY: ${{ secrets.ATLANTIK_API_KEY }}
         run: |
-          curl -X POST https://dnz-qris.vercel.app/api/update-status \
-          -H "Content-Type: application/json" \
-          -d '{"nominal": 2, "secret_key": "denz_rahasia_123"}'
+          RESPONSE=$(curl -s -X POST "https://atlantik-pedia.co.id/api/v1/history" \
+          -d "api_key=$API_KEY")
+
+          # Ambil nominal transaksi terakhir sing sukses
+          AMOUNT=$(echo $RESPONSE | jq -r '.data[0].amount')
+
+          if [ ! -z "$AMOUNT" ] && [ "$AMOUNT" != "null" ]; then
+            curl -X POST https://dnz-qris.vercel.app/api/update-status \
+            -H "Content-Type: application/json" \
+            -d "{\"nominal\": $AMOUNT, \"secret_key\": \"denz_rahasia_123\"}"
+          fi
