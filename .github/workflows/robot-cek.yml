@@ -1,0 +1,15 @@
+name: Robot Cek Mutasi Otomatis
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  cek-mutasi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hit API Update Status
+        run: |
+          curl -X POST https://dnz-qris.vercel.app/api/update-status \
+          -H "Content-Type: application/json" \
+          -d '{"nominal": 2, "secret_key": "denz_rahasia_123"}'
