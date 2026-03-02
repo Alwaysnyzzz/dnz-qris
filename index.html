@@ -38,7 +38,8 @@
             const qrContainer = document.getElementById('qr-container');
             const btnCek = document.getElementById('btn-cek');
 
-            if (!nominal || nominal < 100) return alert("Minimal 100 rupiah!");
+            if (!nominal || nominal < 1) return alert("Minimal 1 rupiah!");
+
 
             btnBayar.innerText = "Processing...";
             btnBayar.disabled = true;
